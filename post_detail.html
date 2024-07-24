@@ -1,0 +1,71 @@
+{% extends 'blog/base.html' %}
+
+{% block content %}
+    <article class="post">
+        <aside class="actions">
+            <a class="btn btn-secondary" href="{% url 'post_edit' pk=post.pk %}">
+                {% include './icons/pencil-fill.svg' %}
+             </a>
+             <form method="POST" action="{% url post_remove pk=post.pk %} class="post-form">{% csrf_token %}
+                <button type="submit" class="post btn btn-danger" name="delete">
+                    <span class="glyphicon glyphicon-remove"></span>
+                </button>
+            </form>
+        </aside>
+        {% extends 'blog/base.html' %}
+
+{% block content %}
+    {% for post in posts %}
+        <div class="post">
+            <p class="date">created: {{ post.created_date|date:'d-m-Y' }}</p>
+            <h1><a href="{% url 'post_detail' pk=post.pk %}">{{ post.title }}</a></h1>
+            <p>{{ post.text|truncatechars:200 }}</p>
+        </div>
+    {% endfor %}
+    <hr>
+    {% extends 'blog/base.html' %}
+
+{% block content %}
+    <article class="post">
+        <aside class="actions">
+            <a class="btn btn-secondary" href="{% url 'post_edit' pk=post.pk %}">
+                {% include './icons/pencil-fill.svg' %}
+             </a>
+             <form method="POST" action="{% url post_remove pk=post.pk %} class="post-form">{% csrf_token %}
+                <button type="submit" class="post btn btn-danger" name="delete">
+                    <span class="glyphicon glyphicon-remove"></span>
+                </button>
+            </form>
+        </aside>
+        {% extends 'blog/base.html' %}
+
+{% block content %}
+    {% for post in posts %}
+        <div class="post">
+            <p class="date">created: {{ post.created_date|date:'d-m-Y' }}</p>
+            <h1><a href="{% url 'post_detail' pk=post.pk %}">Comments: {{ post.approved_comments.count }}</a></h1>
+            <p>{{ post.text|truncatechars:200 }}</p>
+        </div>
+    {% endfor %}
+    <hr>
+    {% for comment in post.comments.all %}
+    {% if user.is_authenticated or comment.approved_comment %}
+    <div class="comment">
+        <div class="date">
+            {{ comment.created_date }}
+            {% if not comment.approved_comment %}
+                <a class="btn btn-default" href="{% url 'comment_remove' pk=comment.pk %}">
+                   {% include './icons/hand-thumbs-down.svg' %}
+                </a>
+                <a class="btn btn-default" href="{% url 'comment_approve' pk=comment.pk %}">
+                   {% include './icons/hand-thumbs-up.svg' %}
+                </a>
+            {% endif %}
+        </div>
+        <strong>{{ comment.author }}</strong>
+        <p>{{ comment.text|linebreaks }}</p>
+    </div>
+    {% endif %}
+{% empty %}
+    <p>No comments here yet :(</p>
+{% endfor %}
